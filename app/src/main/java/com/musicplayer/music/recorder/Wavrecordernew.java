@@ -28,6 +28,7 @@ public class Wavrecordernew {
     private static AudioRecord recorder = null;
     private static int bufferSize = 0;
     //bufferSize *= 2;
+
     private static Thread recordingThread = null;
     private static boolean isRecording = false;
     private static String filenme,wavpath;
