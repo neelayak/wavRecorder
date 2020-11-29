@@ -39,6 +39,7 @@ public class Wavrecordernew {
     // bufferSize = AudioRecord.getMinBufferSize(8000,AudioFormat.CHANNEL_CONFIGURATION_MONO,AudioFormat.ENCODING_PCM_16BIT);
 
 
+
     static String getFilename(){
         String filepath = wavpath;
         File file = new File(filepath,AUDIO_RECORDER_FOLDER);
