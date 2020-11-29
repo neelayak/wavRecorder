@@ -1,4 +1,5 @@
 package com.musicplayer.music.recorder;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,7 +23,7 @@ public class Wavrecordernew {
     private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
     private static final String AUDIO_RECORDER_FOLDER = "Automator";
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
-    private static final int RECORDER_SAMPLERATE = 8000;
+    private static final int RECORDER_SAMPLERATE = 44100;
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
@@ -32,6 +34,7 @@ public class Wavrecordernew {
     private static Thread recordingThread = null;
     private static boolean isRecording = false;
     private static String filenme,wavpath;
+   private static ByteArrayOutputStream mainBuffer = new ByteArrayOutputStream();
 
     // bufferSize = AudioRecord.getMinBufferSize(8000,AudioFormat.CHANNEL_CONFIGURATION_MONO,AudioFormat.ENCODING_PCM_16BIT);
 
@@ -82,11 +85,12 @@ public class Wavrecordernew {
             @Override
             public void run() {
                 writeAudioDataToFile();
+                adddatatorecorder();
+
             }
         },"AudioRecorder Thread");
 
         recordingThread.start();
-
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override
@@ -99,8 +103,10 @@ public class Wavrecordernew {
 
     }
 
+
     private static void writeAudioDataToFile(){
         byte data[] = new byte[bufferSize];
+        Log.e("addbuffer",""+bufferSize);
         String filename = getTempFilename();
         FileOutputStream os = null;
 
@@ -134,6 +140,28 @@ public class Wavrecordernew {
         }
     }
 
+
+
+    public static void adddatatorecorder() {
+        int i;
+        byte[] bArr = new byte[bufferSize];
+        do {
+            try {
+                i = recorder.read(bArr, 0, bufferSize);
+                try {
+                    mainBuffer.write(bArr, 0, i);
+                    Log.e("addbuffer",""+mainBuffer.size());
+                } catch (Exception unused) {
+                }
+            } catch (Exception unused2) {
+                i = 0;
+            }
+
+
+
+        } while (i >= bufferSize);
+
+    }
     public static void stopRecording(){
         if(null != recorder){
             isRecording = false;

@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     public void stopAV() {
         audioRecordView.recreate();
     }
-
+// Visualizer starting and passing the max amplitude
     public void startAV() {
         Timer timer = new Timer();
         TimerTask tt = new TimerTask() {
@@ -245,7 +245,9 @@ public class MainActivity extends AppCompatActivity {
                     int alt = recorder.getMaxAmplitude();
                     audioRecordView.update(alt);
                 } catch (NullPointerException e) {
-
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
                 }
 
             }
