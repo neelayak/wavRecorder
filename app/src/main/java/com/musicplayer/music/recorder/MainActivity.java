@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     AudioRecordView audioRecordView;
 
-    private static Wavrecordernew wavrecordernew;
+    private static Wavedirectrecorder wavrecordernew;
+//    private static Wavedirectrecorder wavedirectrecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (mStartPlaying) {
                     play_button.setImageResource(R.drawable.ic_pause_circle_filled_24px);
+
                 } else {
+
                     play_button.setImageResource(R.drawable.ic_play_circle_filled_24px);
+
                 }
                 mStartPlaying = !mStartPlaying;
             }
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     if (mStartRecording) {
                         record_button.setImageResource(R.drawable.ic_stop_24px);
                         audioRecordView.recreate();
+
                     } else {
                         record_button.setImageResource(R.drawable.ic_mic_24px);
                     }
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // requesting permission for android version M and onward
     private void requestPermission() {
         ActivityCompat.requestPermissions(MainActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, READ_EXTERNAL_STORAGE}, RequestPermissionCode);
@@ -164,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startPlaying() {
+        Wavedirectrecorder.stopRecording();
         player = new MediaPlayer();
         try {
             Log.e("File_loc", wavrecordernew.getFilename());
@@ -190,11 +197,12 @@ public class MainActivity extends AppCompatActivity {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(fileName);
+        recorder.setOutputFile(fileName); // saving data in .3gp format
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         String wavfilepath = getExternalCacheDir().getAbsolutePath();
-        String filename = "Audio.wav";
-        wavrecordernew.startRecording(wavfilepath, filename);
+        String filename = "Audio22.wav";
+        wavrecordernew.startRecording(wavfilepath, filename); // saving data in .wav format
+
         try {
             recorder.prepare();
         } catch (IOException e) {
@@ -206,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         startAV();
     }
 
+    //Destroying and releasing the recorder object
     private void stopRecording() {
         wavrecordernew.stopRecording();
         recorder.stop();
@@ -232,10 +241,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //recreating the audio visualizer
     public void stopAV() {
         audioRecordView.recreate();
     }
-// Visualizer starting and passing the max amplitude
+
+    // Visualizer starting and passing the max amplitude
     public void startAV() {
         Timer timer = new Timer();
         TimerTask tt = new TimerTask() {
