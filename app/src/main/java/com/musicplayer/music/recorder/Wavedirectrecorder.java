@@ -5,6 +5,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -100,8 +101,6 @@ public class Wavedirectrecorder {
 
 
     private static void writeAudioDataToFile() {
-        byte data[] = new byte[bufferSize];
-        Log.e("addbuffer", "" + bufferSize);
         String filename = getTempFilename();
         FileOutputStream os = null;
 
@@ -110,29 +109,16 @@ public class Wavedirectrecorder {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        int read = 0;
-
-        if (null != os) {
-            while (isRecording) {
-                read = recorder.read(data, 0, bufferSize);
-
-                if (AudioRecord.ERROR_INVALID_OPERATION != read) {
-
-                    try {
-                        os.write(data);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            try {
-                os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(os);
+        byte[] dataarr = mainBuffer.toByteArray();
+        try {
+            bufferedOutputStream.write(dataarr);
+            bufferedOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
     }
 
 
@@ -169,7 +155,7 @@ public class Wavedirectrecorder {
             recordingThread = null;
         }
         writeAudioDataToFile();
-        copyWaveFilefrombytearr(getTempFilename(),getFilename());
+        copyWaveFilefrombytearr(getTempFilename(), getFilename());
         deleteTempFile();
     }
 
@@ -179,7 +165,6 @@ public class Wavedirectrecorder {
 
         file.delete();
     }
-
 
 
     // writing data from bytearray to .wav file
